@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UMN AI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+<style>
+
+:root{
+--bg:#0a0a0f;
+--surface:#12121a;
+--surface2:#1a1a26;
+--border:rgba(255,255,255,0.07);
+--red:#c0392b;
+--red-bright:#e74c3c;
+--green:#0f7a3d;
+--green-bright:#1abc9c;
+--text:#e8e8f0;
+--muted:#7070a0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+height:100vh;
+display:flex;
+flex-direction:column;
+background:var(--bg);
+color:var(--text);
+overflow:hidden;
+}
+
+body::before{
+content:'';
+position:fixed;
+inset:0;
+background-image:
+linear-gradient(rgba(139,0,0,0.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(139,0,0,0.04) 1px, transparent 1px);
+background-size:40px 40px;
+pointer-events:none;
+}
+
+header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:14px 22px;
+background:rgba(10,10,15,0.85);
+border-bottom:1px solid var(--border);
+backdrop-filter:blur(20px);
+}
+
+.logo{
+font-family:'Space Mono',monospace;
+font-size:20px;
+font-weight:700;
+letter-spacing:3px;
+background:linear-gradient(90deg,var(--red-bright),#ff6b6b,var(--green-bright));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.header-badge{
+font-family:'Space Mono',monospace;
+font-size:10px;
+letter-spacing:1px;
+color:var(--muted);
+border:1px solid var(--border);
+padding:4px 10px;
+border-radius:20px;
+}
+
+.status-dot{
+width:7px;
+height:7px;
+background:var(--green-bright);
+border-radius:50%;
+display:inline-block;
+margin-right:6px;
+}
+
+#chat{
+flex:1;
+overflow-y:auto;
+padding:24px 20px;
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+#welcome{
+margin:auto;
+text-align:center;
+}
+
+#welcome h2{
+font-family:'Space Mono',monospace;
+font-size:32px;
+margin-bottom:12px;
+background:linear-gradient(135deg,var(--red-bright),var(--green-bright));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+#welcome p{
+color:var(--muted);
+font-size:15px;
+max-width:400px;
+margin:auto;
+line-height:1.7;
+}
+
+.msg-wrap{
+display:flex;
+gap:12px;
+max-width:860px;
+}
+
+.msg-wrap.user{
+margin-left:auto;
+flex-direction:row-reverse;
+}
+
+.avatar{
+width:34px;
+height:34px;
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-family:'Space Mono',monospace;
+font-size:11px;
+font-weight:700;
+}
+
+.ai-av{
+background:linear-gradient(135deg,var(--red),var(--green));
+}
+
+.user-av{
+background:var(--surface2);
+border:1px solid var(--border);
+}
+
+.msg{
+padding:14px 18px;
+border-radius:16px;
+line-height:1.7;
+font-size:15px;
+max-width:700px;
+}
+
+.msg.user{
+background:linear-gradient(135deg, rgba(192,57,43,0.25), rgba(192,57,43,0.15));
+border:1px solid rgba(192,57,43,0.2);
+}
+
+.msg.ai{
+background:var(--surface);
+border:1px solid var(--border);
+}
+
+.msg.ai pre{
+margin:12px 0;
+border-radius:10px;
+overflow:hidden;
+}
+
+.msg.ai pre code{
+padding:16px;
+display:block;
+overflow-x:auto;
+}
+
+#bottom{
+padding:14px 16px;
+background:rgba(10,10,15,0.92);
+border-top:1px solid var(--border);
+}
+
+#input-box{
+display:flex;
+gap:10px;
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:16px;
+padding:10px 14px;
+}
+
+textarea{
+flex:1;
+background:transparent;
+border:none;
+outline:none;
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+font-size:15px;
+resize:none;
+}
+
+#sendBtn{
+width:38px;
+height:38px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,var(--red),var(--green));
+color:white;
+cursor:pointer;
+font-size:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">UMN AI</div>
+
+<div class="header-badge">
+<span class="status-dot"></span>
+ONLINE
+</div>
+</header>
+
+<div id="chat">
+
+<div id="welcome">
+<h2>How can I help you?</h2>
+
+<p>
+Ask anything — maths, science, code, history, writing.
+</p>
+</div>
+
+</div>
+
+<div id="bottom">
+
+<div id="input-box">
+
+<textarea id="prompt" rows="1" placeholder="Ask anything..."></textarea>
+
+<button id="sendBtn">➤</button>
+
+</div>
+
+</div>
+
+<script>
+
+const chat = document.getElementById("chat");
+const textarea = document.getElementById("prompt");
+const sendBtn = document.getElementById("sendBtn");
+
+const history = [];
+
+function addMessage(role,text){
+
+document.getElementById("welcome")?.remove();
+
+const wrap = document.createElement("div");
+
+wrap.className =
+role === "user"
+? "msg-wrap user"
+: "msg-wrap";
+
+wrap.innerHTML = `
+<div class="avatar ${role==="user"?"user-av":"ai-av"}">
+${role==="user"?"YOU":"AI"}
+</div>
+
+<div class="msg ${role}">
+${role==="ai"?marked.parse(text):text}
+</div>
+`;
+
+chat.appendChild(wrap);
+
+wrap.querySelectorAll("pre code").forEach(el=>{
+hljs.highlightElement(el);
+});
+
+chat.scrollTop = chat.scrollHeight;
+}
+
+async function sendMessage(){
+
+const text = textarea.value.trim();
+
+if(!text) return;
+
+addMessage("user",text);
+
+history.push({
+role:"user",
+content:text
+});
+
+textarea.value = "";
+
+try{
+
+const response = await fetch("http://localhost:3000/chat",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+messages:history
+})
+
+});
+
+const data = await response.json();
+
+history.push({
+role:"assistant",
+content:data.reply
+});
+
+addMessage("ai",data.reply);
+
+}catch(err){
+
+addMessage("ai","Error: "+err.message);
+
+}
+
+}
+
+sendBtn.onclick = sendMessage;
+
+textarea.addEventListener("keydown",e=>{
+
+if(e.key==="Enter" && !e.shiftKey){
+
+e.preventDefault();
+
+sendMessage();
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
